@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Design version="12" device_library_hint_path="../../../../mtb-ce-psoc4-csx-button-tuning/v2.0.0/mtb_shared/mtb-pdl-cat2/latest-v1.X/devicesupport.xml" xmlns="http://cypress.com/xsd/cydesignfile_v3">
-    <ToolInfo version="2.2.0.2801"/>
+    <ToolInfo version="2.4.0.5947"/>
     <Devices>
         <Device mpn="CY8C4146AZI-S433">
             <BlockConfig>
