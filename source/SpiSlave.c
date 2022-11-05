@@ -5,7 +5,7 @@
 *
 *
 *******************************************************************************
-* Copyright 2021, Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2021-2022, Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 *
 * This software, including source code, documentation and related
@@ -142,7 +142,7 @@ uint32_t init_slave(void)
 *                 returns TRANSFER_FAILURE if SPI tranfer is not successfull
 *
 ******************************************************************************/
-uint32_t read_packet(uint8_t *rxBuffer, uint32 transferSize)
+uint32_t read_packet(uint8_t *rxBuffer, uint32_t transferSize)
 {
     uint32_t slave_status;
     cy_en_scb_spi_status_t status;
