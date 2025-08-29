@@ -7,7 +7,7 @@
 * Related Document: See README.md 
 *
 *******************************************************************************
-* Copyright 2021-2025, Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2020-2025, Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 *
 * This software, including source code, documentation and related
@@ -53,12 +53,22 @@
 #define SIZE_OF_ELEMENT      (1UL)
 #define SIZE_OF_PACKET       (NUMBER_OF_ELEMENTS * SIZE_OF_ELEMENT)
 
+#if defined  CY_DEVICE_PSOC4HV144K
+#define PACKET_CMD_DATA0     (0UL)
+#define PACKET_CMD_DATA1     (1UL)
+#endif
 
 /*******************************************************************************
 * Function Prototypes
 ********************************************************************************/
+#if defined  CY_DEVICE_PSOC4HV144K
+/* Function to output for port */
+static void Port_output(uint8_t);
+
+#else
 /* Function to turn ON or OFF the LED based on the SPI Master command. */
 static void update_led(uint8_t);
+#endif
 
 /* Function to handle the error */
 static void handle_error(void);
@@ -118,8 +128,13 @@ int main(void)
          * of bytes and in the right format */
         if(status == TRANSFER_COMPLETE)
         {
+#if defined  CY_DEVICE_PSOC4HV144K
+            /* Communication succeeded. Output signal port. */
+            Port_output(rx_buffer[PACKET_CMD_POS]);
+#else
             /* Communication succeeded. Update the LED. */
             update_led(rx_buffer[PACKET_CMD_POS]);
+#endif
         }
         else
         {
@@ -129,7 +144,38 @@ int main(void)
     }
 }
 
-
+/*******************************************************************************
+* Function Name: Port_output
+********************************************************************************
+*
+* Summary:
+*  This function is only used for PSOC4 HVPA 144k Lite kit.
+*  This function outputs low and high signal by received command data in SPI Slave.
+*  If the command data is 1, it outputs a high signal to the port. 
+*  If the command data is 0, it outputs a low signal to the port.
+* Parameters:
+*  (uint8_t) Cmd - Received command data to output signal
+*
+* Return:
+*  None
+*
+*******************************************************************************/
+#if defined  CY_DEVICE_PSOC4HV144K
+static void Port_output(uint8_t Cmd)
+{
+    /* Control the LED based on command received from Master */
+    if(Cmd == PACKET_CMD_DATA0)
+    {
+      /* Output low signal */
+      Cy_GPIO_Write(CYBSP_SW3_PORT, CYBSP_SW3_NUM, 0);
+    }
+    else if(Cmd == PACKET_CMD_DATA1)
+    {
+      /* Output low signal */
+      Cy_GPIO_Write(CYBSP_SW3_PORT, CYBSP_SW3_NUM, 1);
+    }
+}
+#else
 /*******************************************************************************
 * Function Name: update_led
 ********************************************************************************
@@ -160,7 +206,7 @@ static void update_led(uint8_t LED_Cmd)
         Cy_GPIO_Set(CYBSP_USER_LED_PORT, CYBSP_USER_LED_NUM);
     }
 }
-
+#endif
 
 /*******************************************************************************
 * Function Name: handle_error

@@ -1,10 +1,10 @@
 # PSOC&trade; 4: SPI slave
 
-This code example demonstrates the use of an SPI serial communication block (SCB) resource of PSOC&trade; 4 in slave mode. The SPI slave is configured to receive command packets from a master that controls the state of a user LED.
+This code example demonstrates the use of an SPI serial communication block (SCB) resource of PSOC&trade; 4 in slave mode. The SPI slave is configured to receive command packets from a master that controls the state of a user LED or port signal output. 
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-psoc4-spi-slave)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzE0MzAiLCJTcGVjIE51bWJlciI6IjAwMi0zMTQzMCIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IFNQSSBzbGF2ZSIsInJpZCI6ImVrdHgiLCJEb2MgdmVyc2lvbiI6IjIuNS4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJQU09DIn0=)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzE0MzAiLCJTcGVjIE51bWJlciI6IjAwMi0zMTQzMCIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IDQ6IFNQSSBzbGF2ZSIsInJpZCI6ImVrdHgiLCJEb2MgdmVyc2lvbiI6IjIuNi4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJQU09DIn0=)
 
 ## Requirements
 
@@ -32,7 +32,7 @@ This code example demonstrates the use of an SPI serial communication block (SCB
 - [PSOC&trade; 4100T Plus CAPSENSE&trade; Prototyping kit](https://www.infineon.com/CY8CPROTO-041TP) (`CY8CPROTO-041TP`)
 - [PSOC&trade; 4 HVMS-128K Evaluation Kit](https://www.infineon.com/cms/en/product/evaluation-boards/kit_psoc4-hvms-128k_lite/) (`KIT_PSOC4-HVMS-128K_LITE`)
 - [PSOC&trade; 4 HVMS-64K Evaluation Kit](https://www.infineon.com/cms/en/product/evaluation-boards/kit_psoc4-hvms-64k_lite/) (`KIT_PSOC4-HVMS-64K_LITE`)
-
+- [PSOC&trade; 4 HVPA-144K Evaluation Kit](https://www.infineon.com/cms/en/product/evaluation-boards/kit_psoc4-hvpa-144k_lite/) (`KIT_PSOC4-HVPA-144K_LITE`)
 
 ## Hardware setup
 
@@ -56,6 +56,7 @@ Use jumper wires to establish a connection between the master and the slave. Pin
 | CY8CPROTO-041TP         | 0[4] | 0[5] | 0[6] | 0[0] | GND    |
 | KIT_PSOC4-HVMS-128K_LITE  | 5[1] | 5[0] | 1[1] | 1[3] | GND |
 | KIT_PSOC4-HVMS-64K_LITE   | 5[1] | 5[0] | 1[1] | 1[3] | GND |
+| KIT_PSOC4-HVPA-144K_LITE  | 0[1] | 0[2] | 0[0] | 0[3] | GND |
 
 Connect the master's MOSI to the slave's MOSI, MISO to MISO, SCLK to SCLK and CS to CS.
 
@@ -210,7 +211,7 @@ For more details, see the [ModusToolbox&trade; tools package user guide](https:/
 
 4. Connect and program the master kit. See the [PSOC&trade; 4 SPI master](https://github.com/Infineon/mtb-example-psoc4-spi-master) code example.
 
-5. Press the reset buttons on both boards simultaneously. Confirm that the slave kit's User LED blinks at approximately 1 Hz.
+5. Press the reset buttons on both boards simultaneously. Confirm that the slave kit's User LED blinks at approximately 1 Hz. In the KIT_PSOC4-HVPA-144K_LITE, logic High and Low signals are output from the port pin (P0.4). This can be monitored by using an oscilloscope.
 
 ## Debugging
 
@@ -234,16 +235,16 @@ Follow the instructions in your preferred IDE.
 
 ### Resources and settings
 
-In this code example, the PSOC&trade; 4 SCB block is configured as a SPI slave. The master sends a packet to the slave with a command to turn ON or turn OFF the user LED at an interval of 1 second. The packet consists of a start byte, a command byte, and an end byte. The start and end bytes are checked; if the bytes are correct, the user LED is controlled according to the command byte.
+In this code example, the PSOC&trade; 4 SCB block is configured as a SPI slave. The master sends a packet to the slave with a command to turn ON or turn OFF the user LED at an interval of 1 second. The packet consists of a start byte, a command byte, and an end byte. The start and end bytes are checked; if the bytes are correct, the user LED is controlled according to the command byte. In the KIT_PSOC4-HVPA-144K_LITE, instead of the user LED, a High signal is output by the command 0x01. And a Low signal is output by the command 0x00 in Port pin(P0.4).
 
 
 ### Packet format sent by the master to the slave
 
-The master sends the command to control the status of the LED every second. The command has a `StartOfPacket (SOP)` followed by the LED status and an `EndOfPacket (EOP)`. This command is decoded by the slave and sets the LED status only if SOP and EOP are received correctly.
+The master sends the command to control the status of the LED every second. The command has a `StartOfPacket (SOP)` followed by the LED status and an `EndOfPacket (EOP)`. This command is decoded by the slave and sets the LED status only if SOP and EOP are received correctly. In the KIT_PSOC4-HVPA-144K_LITE, a High or Low signal is output to the port pin.
 
-| SoP  | LED Status | EoP  |
-|------|------------|------|
-| 0x01 | 0x00 or 0x01 | 0x17 |
+| SoP  | LED or Port output Status | EoP  |
+|------|---------------------------|------|
+| 0x01 | 0x00 or 0x01              | 0x17 |
 
 
 **Table 2. Application resources**
@@ -253,16 +254,16 @@ The master sends the command to control the status of the LED every second. The 
 | :------- | :------------    | :------------ |
 | SCB (SPI) (PDL) |sSPI_HW          | SPI slave driver to communicate with the SPI master |
 | GPIO (PDL)    | CYBSP_USER_LED         | User LED                  |
-
+| GPIO (PDL)    | CYBSP_SW3   | Port output in the KIT_PSOC4-HVPA-144K_LITE only |
 <br>
 
 ## Related resources
 
 Resources  | Links
 -----------|----------------------------------
-Application notes  | [AN79953](https://www.infineon.com/AN79953) – Getting started with PSOC&trade; 4<br>[AN0034](https://www.infineon.com/dgdl/?fileId=8ac78c8c93dda25b01954cc962534907) - Getting started with PSOC&trade; 4 HV MS MCUs in ModusToolbox&trade;
+Application notes  | [AN79953](https://www.infineon.com/AN79953) – Getting started with PSOC&trade; 4<br>[AN0034](https://www.infineon.com/row/public/documents/10/42/infineon-an0034-getting-started-with-psoc-4-hv-ms-mcus-in-modustoolbox-applicationnotes-en.pdf) - Getting started with PSOC&trade; 4 HV MS MCUs in ModusToolbox&trade;
 Code examples  | [Using ModusToolbox&trade;](https://github.com/Infineon/Code-Examples-for-ModusToolbox-Software) on GitHub
-Device documentation | [PSOC&trade; 4 datasheets](https://www.infineon.com/cms/en/search.html#!view=downloads&term=psoc4&doc_group=Data%20Sheet) <br>[PSOC&trade; 4 technical reference manuals](https://www.infineon.com/cms/en/search.html#!view=downloads&term=psoc4&doc_group=Additional%20Technical%20Information)<br>[PSOC&trade; high voltage (HV) mixed signal (MS) automotive MCU 128K datasheets](https://www.infineon.com/dgdl/?fileId=8ac78c8c956a0a47019581095cec5cf6) <br>[PSOC&trade; high voltage (HV) mixed signal (MS) automotive MCU 64K datasheets](https://www.infineon.com/dgdl/?fileId=8ac78c8c956a0a470195817712a75d7a) <br>[PSOC&trade; high voltage (HV) mixed signal (MS) MCU: PSOC&trade; HVMS-128K registers reference manuals](https://www.infineon.com/dgdl/?fileId=8ac78c8c95650102019567b74fb62a38) <br>[PSOC&trade; high voltage (HV) mixed signal (MS) MCU: PSOC&trade; HVMS-64K registers reference manuals](https://www.infineon.com/dgdl/?fileId=8ac78c8c93dda25b019562232806264b&da=t) <br>[PSOC&trade; high voltage (HV) mixed signal (MS) MCU architecture reference manuals](https://www.infineon.com/dgdl/?fileId=8ac78c8c93dda25b0195297d34bf3ee6&da=t)
+Device documentation | [PSOC&trade; 4 datasheets](https://documentation.infineon.com/psoc4/docs/qqs1702048028479) <br>[PSOC&trade; 4 technical reference manuals](https://documentation.infineon.com/psoc4/docs/hup1702048028817) <br>[PSOC&trade; high voltage (HV) mixed signal (MS) automotive MCU 128K datasheets](https://www.infineon.com/assets/row/public/documents/10/49/infineon-cy8c41x7-psoc-4-high-voltage-hv-mixed-signal-ms-automotive-mcu-based-on-32-bit-arm-cortex--m0-datasheet-en.pdf) <br>[PSOC&trade; high voltage (HV) mixed signal (MS) automotive MCU 64K datasheets](https://www.infineon.com/assets/row/public/documents/10/49/infineon-cy8c41x5-cy8c41x6-psoc-4-high-voltage-hv-mixed-signal-ms-automotive-mcu-based-on-32-bit-arm-cortex--m0-datasheet-en-09018a9080d1ff70.pdf) <br>[PSOC&trade; high voltage (HV) precision analog (PA) automotive MCU 144K datasheets](https://documentation.infineon.com/psoc4atv/docs/rsd1669346756301) <br>[PSOC&trade; high voltage (HV) mixed signal (MS) MCU: PSOC&trade; HVMS-128K registers reference manuals](https://www.infineon.com/row/public/documents/10/57/infineon-psoc-high-voltagehvmixed-signal-msmcu-psoc-hvms-128k-registers-reference-manual-additionaltechnicalinformation-en.pdf) <br>[PSOC&trade; high voltage (HV) mixed signal (MS) MCU: PSOC&trade; HVMS-64K registers reference manuals](https://www.infineon.com/content/dam/infineon/row/public/documents/10/57/infineon-psoc-4-high-voltagehvmixed-signalmsmcu-psoc4hvms-64k-registers-reference-manual-additionaltechnicalinformation-en.pdf) <br>[PSOC&trade; high voltage (HV) mixed signal (MS) MCU architecture reference manuals](https://www.infineon.com/assets/row/public/documents/10/57/infineon-psoc-high-voltage-hv-mixed-signal-ms-mcu-architecture-reference-manual-additionaltechnicalinformation-en.pdf) <br>[PSOC&trade; high voltage (HV) precision analog (PA) MCU architecture reference manuals](https://documentation.infineon.com/psoc4atv/docs/vkg1670389100008)
 Development kits | Select your kits from the [Evaluation board finder](https://www.infineon.com/cms/en/design-support/finder-selection-tools/product-finder/evaluation-board) page.
 Libraries on GitHub | [mtb-pdl-cat2](https://github.com/Infineon/mtb-pdl-cat2) – PSOC&trade; 4 Peripheral Driver Library (PDL)<br> [mtb-hal-cat2](https://github.com/Infineon/mtb-hal-cat2) – Hardware Abstraction Layer (HAL) library
 Tools  | [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) – ModusToolbox&trade; software is a collection of easy-to-use libraries and tools enabling rapid development with Infineon MCUs for applications ranging from wireless and cloud-connected systems, edge AI/ML, embedded sense and control, to wired USB connectivity using PSOC&trade; Industrial/IoT MCUs, AIROC&trade; Wi-Fi and Bluetooth&reg; connectivity devices, XMC&trade; Industrial MCUs, and EZ-USB&trade;/EZ-PD&trade; wired connectivity controllers. ModusToolbox&trade; incorporates a comprehensive set of BSPs, HAL, libraries, configuration tools, and provides support for industry-standard IDEs to fast-track your embedded application development.
@@ -288,6 +289,7 @@ Document title: *CE231430* - *PSOC&trade; 4: SPI slave*
  2.3.0   | Added support for CY8CPROTO-040T-MS and updated to support ModusToolbox&trade; v3.4.
  2.4.0   | Added support for CY8CPROTO-041TP and updated to support ModusToolbox&trade; v3.5. <br> Changed HVMS kit name PSoC4 to PSOC4.
  2.5.0   | Added support for KIT_PSOC4-HVMS-128K_LITE-02 and KIT_PSOC4-HVMS-64K_LITE-02
+ 2.6.0   | Added support for KIT_PSOC4-HVPA-144K_LITE
 <br>
 
 ---------------------------------------------------------
